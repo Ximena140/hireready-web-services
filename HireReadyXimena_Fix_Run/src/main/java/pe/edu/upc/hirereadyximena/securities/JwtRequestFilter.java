@@ -32,10 +32,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        if (path.equals("/authenticate")
-                || path.equals("/")
+        if (path.equals("/")
+                || path.equals("/authenticate")
+                || path.equals("/api/users/login")
                 || path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")) {
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/webjars")) {
+
             chain.doFilter(request, response);
             return;
         }
@@ -57,8 +60,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        if (username != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null
+                && role != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             if (jwtUtil.validateToken(jwtToken, username)) {
 
